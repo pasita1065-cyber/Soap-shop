@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ร้านสบู่สมุนไพร</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; background: #f4f4f4; }
+    .box { display: flex; gap: 15px; margin-bottom: 20px; }
+    .item { background: white; padding: 15px; border-radius: 10px; width: 50%; text-align: center; }
+    .item img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
+    form { background: white; padding: 20px; border-radius: 10px; }
+    input, select, textarea, button { width: 100%; padding: 10px; margin: 6px 0; box-sizing: border-box; }
+    button { background: #28a745; color: white; border: none; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">🧼 ร้านสบู่แฮนด์เมด (2 สูตร)</h2>
+  
+  <div class="box">
+    <div class="item">
+      <img src="images/IMG_1785.jpeg" alt="สบู่สูตร 1">
+      <h4>SKU-01: สบู่น้ำผึ้ง</h4>
+      <p>100 บาท</p>
+    </div>
+    <div class="item">
+      <img src="images/IMG_1786.jpeg" alt="สบู่สูตร 2">
+      <h4>SKU-02: สบู่มังคุด</h4>
+      <p>120 บาท</p>
+    </div>
+  </div>
+
+  <form id="orderForm">
+    <h3>📦 กรอกข้อมูลสั่งซื้อ (สำหรับแพ็คส่ง)</h3>
+    <input type="text" id="name" placeholder="ชื่อ-นามสกุล ผู้รับ" required>
+    <input type="tel" id="phone" placeholder="เบอร์โทรศัพท์" required>
+    <textarea id="address" rows="3" placeholder="ที่อยู่จัดส่งทั้งหมด" required></textarea>
+    
+    <select id="sku">
+      <option value="SKU-01" data-price="100">SKU-01: สบู่น้ำผึ้ง (100 บาท)</option>
+      <option value="SKU-02" data-price="120">SKU-02: สบู่มังคุด (120 บาท)</option>
+    </select>
+    
+    <input type="number" id="qty" value="1" min="1" required>
+    <button type="submit" id="btn">สั่งซื้อสินค้า</button>
+  </form>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbykelIpmCHXgQpJrJogoIyg6lyOvlgf5fb9VnI9R2gg1Q68nXpCiTFZbQnStW_EWH1f/exec';
+
+    document.getElementById('orderForm').addEventListener('submit', e => {
+      e.preventDefault();
+      document.getElementById('btn').innerText = 'กำลังส่งข้อมูล...';
+      const skuSelect = document.getElementById('sku');
+      const price = skuSelect.options[skuSelect.selectedIndex].getAttribute('data-price');
+      const qty = document.getElementById('qty').value;
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({
+          name: document.getElementById('name').value,
+          phone: document.getElementById('phone').value,
+          address: document.getElementById('address').value,
+          sku: skuSelect.value,
+          qty: qty,
+          total: price * qty
+        })
+      }).then(() => {
+        alert('สั่งซื้อสำเร็จ! ข้อมูลเข้าตารางเรียบร้อย');
+        document.getElementById('orderForm').reset();
+        document.getElementById('btn').innerText = 'สั่งซื้อสินค้า';
+      });
+    });
+  </script>
+</body>
+</html>
